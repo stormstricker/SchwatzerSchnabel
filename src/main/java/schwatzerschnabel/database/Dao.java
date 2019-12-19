@@ -14,7 +14,9 @@ import schwatzerschnabel.database.entities.WordPair;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -116,13 +118,14 @@ public class Dao {
         //Create an instance of CriteriaQuery by calling the CriteriaBuilder createQuery() method
         CriteriaQuery<WordPair> cr = cb.createQuery(WordPair.class);
         Root<WordPair> root = cr.from(WordPair.class);
-        cr.select(root).orderBy(cb.desc(root.get("id")));
-        cr.select(root).where(cb.equal(root.get("authorId"), authorId));
+        List<Predicate>  predicates = new ArrayList<Predicate>();
+        predicates.add(cb.equal(root.get("authorId"), authorId));
 
         if (!pos.equals(""))  {
-            cr.select(root).where(cb.equal(root.get("pos"), pos));
+            predicates.add(cb.equal(root.get("pos"), pos));
         }
 
+        cr.select(root).orderBy(cb.desc(root.get("id"))).where(predicates.toArray(new Predicate[]{}));
         //Create an instance of Query by calling the Session createQuery() method
         Query<WordPair> query = session.createQuery(cr);
 

@@ -107,6 +107,7 @@ public class WordPair {
 
     public void setForeignWord(String foreignWord) {
         this.foreignWord = foreignWord;
+        pos = calculatePos();
     }
 
     public void setTranslation(String translation) {
