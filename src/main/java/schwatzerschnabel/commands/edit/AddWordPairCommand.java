@@ -1,13 +1,15 @@
-package schwatzerschnabel.commands;
+package schwatzerschnabel.commands.edit;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import schwatzerschnabel.commands.Command;
+import schwatzerschnabel.database.Dao;
 import schwatzerschnabel.database.entities.WordPair;
 
 import java.time.Instant;
 
-public class AddWordPairCommand extends  Command  {
+public class AddWordPairCommand extends Command {
     @Override
     public void execute()  {
         rawMessage = rawMessage.trim();
@@ -29,14 +31,15 @@ public class AddWordPairCommand extends  Command  {
     }
 
     public void execute(WordPair wordPair)  {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.save(wordPair);
-        session.getTransaction().commit();
-        session.close();
-        event.getChannel().sendMessage("A **" + wordPair.getForeignWord() +
-                "** = *" + wordPair.getTranslation() + "* has been created!").queue();
+        boolean isInserted = Dao.insertWordPair(wordPair);
+        if (isInserted)  {
+            event.getChannel().sendMessage("A pair **" + wordPair.getForeignWord() +
+                    "** = *" + wordPair.getTranslation() + "* has been created!").queue();
+        }
+        else  {
+            event.getChannel().sendMessage("*A pair for a given foreign word already exists. You can edit it by typing*: " +
+                    "```!e pair " + wordPair.getForeignWord() + ": translation=new translation```").queue();
+        }
     }
 
 }

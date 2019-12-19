@@ -6,6 +6,13 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import schwatzerschnabel.commands.*;
+import schwatzerschnabel.commands.edit.AddWordPairCommand;
+import schwatzerschnabel.commands.edit.EditWordPairCommand;
+import schwatzerschnabel.commands.guess.GuessForeignWordCommand;
+import schwatzerschnabel.commands.guess.GuessTranslationCommand;
+import schwatzerschnabel.commands.view.ViewRandomWordPairCommand;
+import schwatzerschnabel.commands.view.ViewAllWordPairsCommand;
+import schwatzerschnabel.commands.view.ViewWordPairDetailsCommand;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,11 +29,32 @@ public class SchwatzerSchnabel extends ListenerAdapter {
     {
         commands.put("!v pairs", new ViewAllWordPairsCommand());
         commands.put("!view pairs", new ViewAllWordPairsCommand());
+
         commands.put("!a pair", new AddWordPairCommand());
         commands.put("!add pair", new AddWordPairCommand());
-        commands.put("!help", new HelpCommand());
-        commands.put("!r pair", new RandomWordPairCommand());
-        commands.put("!random pair", new RandomWordPairCommand());
+
+        commands.put("!r pair", new ViewRandomWordPairCommand());
+        commands.put("!random pair", new ViewRandomWordPairCommand());
+
+        commands.put("!p details", new ViewWordPairDetailsCommand());
+        commands.put("!pair details", new ViewWordPairDetailsCommand());
+
+        commands.put("!e pair", new EditWordPairCommand());
+        commands.put("!edit pair", new EditWordPairCommand());
+
+        GuessForeignWordCommand guessFwCommand = new GuessForeignWordCommand();
+        GuessTranslationCommand guessTrCommand = new GuessTranslationCommand();
+
+        commands.put("!g fw", guessFwCommand);
+        commands.put("!g tr", guessTrCommand);
+
+        //commands.put("!g", )
+
+        commands.put("!guess fw", guessFwCommand);
+        commands.put("!guess tr", guessTrCommand);
+
+        commands.put("!sch help", new HelpCommand());
+        commands.put("!schnabel help", new HelpCommand());
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,6 +1,8 @@
-package schwatzerschnabel.commands;
+package schwatzerschnabel.commands.speech;
 
-public class WordToSpeechCommand extends  Command  {
+import schwatzerschnabel.commands.Command;
+
+public class WordToSpeechCommand extends Command {
     @Override
     public void execute()  {
 

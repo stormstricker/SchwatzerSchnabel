@@ -1,8 +1,16 @@
 package schwatzerschnabel.database.entities;
 
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
+import opennlp.tools.tokenize.SimpleTokenizer;
+import schwatzerschnabel.utils.TextWizard;
+
 import javax.persistence.*;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "word_pairs")
@@ -18,6 +26,44 @@ public class WordPair {
     private String authorId;  //discord id
     @Column(name = "addDate")
     private Instant addDate;
+    @Column(name = "pos")
+    private String pos;
+
+    private String calculatePos()  {
+        try {
+            SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
+            String[] tokens = tokenizer.tokenize(foreignWord);
+
+            InputStream inputStreamPOSTagger =
+                    WordPair.class.getResourceAsStream("/opennlp_models/de-pos-maxent.bin");
+            POSModel posModel = new POSModel(inputStreamPOSTagger);
+            POSTaggerME posTagger = new POSTaggerME(posModel);
+            String tags[] = posTagger.tag(tokens);
+
+            Map<String, List<String>> germanPoses = TextWizard.getGermanPoses();
+            String lowestPos = "";
+            int lowestPosIndex = germanPoses.size();
+            int count = 0;
+            for (String pos: germanPoses.keySet())  {
+                for (String tag: tags)  {
+                    if (germanPoses.get(pos).contains(tag))  {
+                        if (count < lowestPosIndex)  {
+                            lowestPos = pos;
+                            lowestPosIndex = count;
+                        }
+                    }
+                }
+
+                count++;
+            }
+
+            return lowestPos;
+        }
+        catch (Exception e)  {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
     public WordPair()  {}
 
@@ -26,7 +72,10 @@ public class WordPair {
         this.translation = translation;
         this.authorId = authorId;
         this.addDate = addDate;
+
+        pos = calculatePos();
     }
+
 
     public int getId() {
         return id;
@@ -48,6 +97,10 @@ public class WordPair {
         return addDate;
     }
 
+    public String getPos() {
+        return pos;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -66,5 +119,9 @@ public class WordPair {
 
     public void setAddDate(Instant addDate) {
         this.addDate = addDate;
+    }
+
+    public void setPos(String pos) {
+        this.pos = pos;
     }
 }
