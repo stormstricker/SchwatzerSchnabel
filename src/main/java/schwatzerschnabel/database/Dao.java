@@ -75,14 +75,17 @@ public class Dao {
         session.close();
     }
 
-    public static WordPair getWordPairByForeignWord(String foreignWord)  {
+    public static WordPair getWordPairByForeignWordAndAuthor(String foreignWord, String authorId)  {
         Session session = getSessionFactory().openSession();
         session.beginTransaction();
 
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<WordPair> cr = cb.createQuery(WordPair.class);
         Root<WordPair> root = cr.from(WordPair.class);
-        cr.select(root).where(cb.equal(root.get("foreignWord"), foreignWord));
+        List<Predicate>  predicates = new ArrayList<Predicate>();
+        predicates.add(cb.equal(root.get("authorId"), authorId));
+        predicates.add(cb.equal(root.get("foreignWord"), foreignWord));
+        cr.select(root).where(predicates.toArray(new Predicate[]{}));
 
         Query<WordPair> query = session.createQuery(cr);
         query.setMaxResults(1);
@@ -91,7 +94,7 @@ public class Dao {
         session.clear();
         session.close();
 
-        return result.get(0);
+        return result.size() > 0 ? result.get(0) : null;
     }
 
     public static int getMaxId()  {

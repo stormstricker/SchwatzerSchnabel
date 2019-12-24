@@ -19,7 +19,7 @@ public class ViewWordPairDetailsCommand extends ViewCommand {
             foreignWord = rawMessage.substring(index1 + 1, index2);
         }
 
-        WordPair pair = Dao.getWordPairByForeignWord(foreignWord);
+        WordPair pair = Dao.getWordPairByForeignWordAndAuthor(foreignWord, event.getMessage().getAuthor().getId());
 
         String message = "";
         if (isTable)  {

@@ -16,9 +16,10 @@ public class AddWordPairCommand extends Command {
         int delimeterIndex1 = rawMessage.indexOf(":");
         int delimeterIndex2 = rawMessage.indexOf("=");
         int delimeterIndex3 = rawMessage.indexOf("-");
+        int delimeterIndex4 = rawMessage.indexOf("–");
 
         int finalDelimeterIndex = (delimeterIndex1 > 0) ? delimeterIndex1 :
-                (delimeterIndex2 > 0) ? delimeterIndex2 : delimeterIndex3;
+                (delimeterIndex2 > 0) ? delimeterIndex2 : (delimeterIndex3 > 0) ? delimeterIndex3 : delimeterIndex4;
         if (finalDelimeterIndex < 0)  {
             return;
         }
@@ -31,8 +32,9 @@ public class AddWordPairCommand extends Command {
     }
 
     public void execute(WordPair wordPair)  {
-        boolean isInserted = Dao.insertWordPair(wordPair);
-        if (isInserted)  {
+        boolean pairExists = Dao.getWordPairByForeignWordAndAuthor(wordPair.getForeignWord(), event.getMessage().getAuthor().getId()) != null;
+        if (!pairExists)  {
+            Dao.insertWordPair(wordPair);
             event.getChannel().sendMessage("A pair **" + wordPair.getForeignWord() +
                     "** = *" + wordPair.getTranslation() + "* has been created!").queue();
         }

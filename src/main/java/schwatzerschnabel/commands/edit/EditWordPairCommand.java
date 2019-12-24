@@ -23,7 +23,7 @@ public class EditWordPairCommand extends Command {
             foreignWord = rawMessage.substring(0, index3);
         }
 
-        WordPair pair = Dao.getWordPairByForeignWord(foreignWord);
+        WordPair pair = Dao.getWordPairByForeignWordAndAuthor(foreignWord, event.getMessage().getAuthor().getId());
         rawMessage = rawMessage.substring(index3 +1).trim();
         int posIndex = rawMessage.indexOf("pos");
         int translationIndex = rawMessage.indexOf("translation");

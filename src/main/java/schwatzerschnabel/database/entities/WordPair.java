@@ -18,7 +18,7 @@ public class WordPair {
     @Id @GeneratedValue
     private int id;
 
-    @Column(unique = true, name = "foreign_word")
+    @Column(unique = false, name = "foreign_word")
     private String foreignWord;
     @Column(name = "translation")
     private String translation;
